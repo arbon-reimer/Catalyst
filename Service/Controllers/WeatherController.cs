@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -35,16 +36,22 @@ namespace Service.Controllers
             _HttpClient.DefaultRequestHeaders.Accept.Clear();
             var weatherInfo = await _HttpClient.GetStringAsync(new Uri(_url));
             //evaluate return
-            XDocument weatherDocument = XDocument.Load(weatherInfo);
-            if(weatherDocument.Root.Name.LocalName == "weatherdata")
+            XmlDocument weatherDocument = new XmlDocument();
+            weatherDocument.LoadXml(weatherInfo);
+            if(weatherDocument.DocumentElement.Name == "weatherdata")
             {
+                XmlNodeList nodes = weatherDocument.DocumentElement.SelectNodes("forecast/time");
+                foreach (XmlNode node in nodes)
+                {
 
+                }
             }
             else
             {
 
             }
+            return Ok();
         }
-
+       
     }
 }
