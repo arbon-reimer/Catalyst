@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Weather Exercise | Front End</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .dogIcon {
+            height: 60px;
+            width: 60px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.5/bluebird.min.js"></script>
+    <script type="text/javascript">
+
+        var weatherPromise = function (id) {
+            return new Promise(function (resolve, reject) {
+                /*stuff using username, password*/
+                var text = fetchData(id);
+                if (text.length > 0) {
+                    resolve(text);
+                } else {
+                    reject(Error("It broke"));
+                }
+            });
+        };
+
+
+        function showData() {
+            var input = $("#tb-CityZip").val();
+            
+            var box = $("#weatherResults");
+
+            box.fadeOut(750, function () { box.html(""); });
+
+            var weatherReceived = weatherPromise(6);
+            weatherReceived.then(function (data) {
+                box.fadeIn(750, function () { box.html(data); });
+            }, function () { alert("Nope"); });
+            
+            
+            return;
+        }
+        function fetchData(id) {
+            var sourceUrl = "http://localhost:53215/api/weather/" + id;
+            var returnData = "";
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: sourceUrl,
+                success: function (data) {
+                    returnData = data;
+                }
+            });
+            return returnData;
+        }
+        $(document).ready(function () {
+            $("#btnSubmit").on("click", showData);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Weather Retriever
+                <img src="images/iconfinder_dog-01_2140043.png" class="dogIcon" />
+            </div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <label for="tb-CityZip">Enter City or Zip</label>
+                        <input type="text" id="CityZip" class="form-control" placeholder="Enter US ZIP Code or City Name" />
+                    </div>
+                    <div class="pull-right">
+                        <button type="button" id="btnSubmit" class="btn btn-primary btn-sm">Fetch!</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel panel-body">
+                <div id="weatherResults">
+                    Your Weather Data will Arrive Here!
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
